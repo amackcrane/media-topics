@@ -1,0 +1,9 @@
+[
+  {
+    "name": "full_dataset_clean.tsv",
+    "hash": "333ae9601420f6b8fb6f3fef76bb2e4a",
+    "source": "https://zenodo.org/record/3884334/files/full_dataset_clean.tsv.gz",
+    "description": "COVID-19 dataset collected by Banda et al (https://doi.org/10.5281/zenodo.3723939) from 2020/1 thru 2020/3. found via DocNow",
+    "date_accessed": "2020-06-11"
+  }
+]
