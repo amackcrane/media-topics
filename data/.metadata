@@ -5,5 +5,12 @@
     "source": "https://zenodo.org/record/3884334/files/full_dataset_clean.tsv.gz",
     "description": "COVID-19 dataset collected by Banda et al (https://doi.org/10.5281/zenodo.3723939) from 2020/1 thru 2020/3. found via DocNow",
     "date_accessed": "2020-06-11"
+  },
+  {
+    "name": "test_data.csv",
+    "hash": "80eb8b209be3464d4cf87797f81ee8dc",
+    "source": "Sampled from that #election2016 dataset I found on kaggle",
+    "description": "English tweets from circa election day Nov 2016; here for demonstration of biclustering",
+    "date_accessed": "2020-09-02"
   }
 ]
