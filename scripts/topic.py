@@ -21,6 +21,7 @@ if not os.path.exists(f"{path}visualization"):
 
 # helper functions
 exec(open(f"{path}scripts/topic_helpers.py", 'r').read())
+exec(open(f"{path}scripts/time_helpers.py", 'r').read())
 
 
 # draw in dataframe
@@ -58,61 +59,43 @@ else:
     np.save(cache_path, word_bags)
 
 
-# vectorize
 
+# Look at tweet density over time
+plt.figure(figsize=(8,6))
+tw_df.created_at.apply(date_from_str).hist(bins=70)
+plt.xticks(rotation=60)
+plt.tight_layout()
+#plt.show()
+#plt.savefig("visualization/date_hist")
+
+
+# vectorize
 vectorizer = Vectorizer(apply_idf=True, min_df=30, max_df=.3)
 
 doc_term = vectorizer.fit_transform(word_bags)
 
+
+# Topic Model
 model = TopicModel('lda', n_topics=50)
 
 # hmmm takes a few seconds even on 9k x 600 doc-term matrix
 model.fit(doc_term)
 doc_topic = model.transform(doc_term)
-topics = model.top_topic_terms(vectorizer.id_to_term, top_n=10, weights=True)
-
-# in: lists of top terms by topic
-# out: lists side by side in data.frame for nice(r) report printing
-def print_topics(topics, n_terms=30):
-    # start w/ list of (topic, termlist), where termlist is list of (term, weight)
-    df_dict = {}
-    for top,termlist in topics:
-        df_dict[top] = pd.DataFrame(termlist, columns=['word','weight'])
-        df_dict[top] = df_dict[top].iloc[0:n_terms,:]
-    df_concat = pd.concat(df_dict, axis=1, names=['topic'])
-    print(df_concat)
-
-print_topics(topics)
+topic_terms = list(model.top_topic_terms(vectorizer.id_to_term, top_n=40, weights=True))
+topic_wts = model.topic_weights(doc_topic)
+# grrr generators
+#topic_docs = list(model.top_topic_docs(doc_topic, weights=True))
 
 
+# Inspect
+# top terms by topic
+print_topics(topic_terms)
 
-# hacky hacky visualization of topics over time
+# boxplot of topic distributions over time
+f=plot_over_time(doc_topic, topic_terms, topic_wts, tw_df, sort_date=True)
+f.savefig("visualization/box_date")
 
-def date_from_str(string):
-    months=dict(Jan=1, Feb=2, Mar=3, Apr=4, May=5, Jun=6, Jul=7, Aug=8, Sep=9, Oct=10, Nov=11, Dec=12)
-    year = int(string[-4:])
-    month, day = string.split(' ')[1:3]
-    month = months[month]
-    day = int(day)
-    return datetime.date(year, month, day)
-
-def over_time(doc_topic, df, n_docs=100):
-    topic_dates = []
-    for topic in range(doc_topic.shape[1]):
-        # get list of dates
-        topic_wts = doc_topic[:,topic]
-        doc_ids = np.argsort(topic_wts)[-1*n_docs:]
-        dates = tw_df.created_at.iloc[doc_ids]
-        dates = dates.apply(date_from_str)
-        topic_dates.append(dates)
-    # print p5, p95?
-    for t in range(len(topic_dates)):
-        print(f"Topic {t}:")
-        dates = topic_dates[t]
-        p5 = dates.quantile(q=.05, interpolation='nearest')
-        p95 = dates.quantile(q=.95, interpolation='nearest')
-        print(p5)
-        print(p95)
-
+# pull up tweets for a given topic
+topic_tweets(4, doc_topic, tw_df, n=30)
 
 
