@@ -1,6 +1,8 @@
 import matplotlib.dates as mdates
+import datetime
 
 # convert from twitter json to datetime.date
+# string  format e.g.: Sun Jan 26 23:08:29 +0000 2020
 def date_from_str(string):
     months=dict(Jan=1, Feb=2, Mar=3, Apr=4, May=5, Jun=6, Jul=7, Aug=8, Sep=9, Oct=10, Nov=11, Dec=12)
     year = int(string[-4:])
@@ -8,6 +10,7 @@ def date_from_str(string):
     month = months[month]
     day = int(day)
     return datetime.date(year, month, day)
+    
 
 # hacky starting point -- for each topic, print p5 & p95 dates
 def over_time(doc_topic, df, n_docs=100):
