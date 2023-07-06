@@ -5,7 +5,7 @@ numpy==1.18.1
 pandas==1.0.1
 praw==7.0.0
 scikit-learn==0.22.1
-scipy==1.4.1
+scipy==1.10.0
 spacy==2.2.3
 textacy==0.9.1
 twarc==1.9.0
